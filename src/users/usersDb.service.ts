@@ -16,7 +16,7 @@ export class UsersDbService {
     const user = this.userRepository.getById(id);
     return user;
   }
-  async getByEmail(email: string): Promise<Omit<User, 'password'>> {
+  async getByEmail(email: string): Promise<Partial<User>> {
     const user = this.userRepository.getByEmail(email);
     return user;
   }

@@ -38,9 +38,7 @@ export class UsersRepository {
     return data;
     return null;
   }
-  async getByEmail(email: string): Promise<Omit<User, 'password'>> {
-    console.log(email);
-
+  async getByEmail(email: string): Promise<Partial<User>> {
     const userByEmail = await this.userRepository.findOne({ where: { email } });
     if (!userByEmail)
       throw new NotFoundException(

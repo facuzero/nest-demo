@@ -29,7 +29,6 @@ export class ProductsController {
   }
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AuthGuard)
   createProduct(@Body() product: Product) {
     return this.productsService.createProduct(product);
   }

@@ -6,7 +6,9 @@ import {
   IsStrongPassword,
   MaxLength,
   MinLength,
+  Validate,
 } from 'class-validator';
+import { passwordCompare } from 'src/decorators/passwordCompare.decorator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -30,6 +32,10 @@ export class CreateUserDto {
     minSymbols: 1,
   })
   password: string;
+
+  @IsNotEmpty()
+  @Validate(passwordCompare, ['password'])
+  confirmPassword: string;
 
   @IsNotEmpty()
   @IsString()

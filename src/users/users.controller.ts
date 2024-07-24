@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -11,10 +10,12 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { User } from './users.entity';
 import { UsersDbService } from './usersDb.service';
-import { CreateUserDto, LoginUserDto } from './user.dto';
+import { CreateUserDto } from './user.dto';
+import { AuthGuard } from 'src/auth/auth.guards';
 
 @Controller('users')
 export class UsersController {
@@ -22,8 +23,7 @@ export class UsersController {
     private readonly userDbService: UsersDbService, //Para guardar datos en la DB
   ) {}
   @Get()
-  /*   @UseGuards(AuthGuard)
-   */
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   getUsers(@Query('page') page: number, @Query('limit') limit: number) {
     return this.userDbService.getUsers(page, limit);
@@ -37,24 +37,12 @@ export class UsersController {
   }
 
   @Get(':id')
-  /*   @UseGuards(AuthGuard)
-   */
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   getById(@Param('id', ParseUUIDPipe) id: string) {
     return this.userDbService.getById(id);
   }
 
-  @Post('auth/signin')
-  @HttpCode(HttpStatus.ACCEPTED)
-  async signin(@Body() body: LoginUserDto) {
-    const { email, password } = body;
-    try {
-      const result = await this.userDbService.signin(email, password);
-      return { message: result };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
   @Post()
   @HttpCode(HttpStatus.CREATED)
   createUser(@Body() user: CreateUserDto) {
@@ -62,16 +50,14 @@ export class UsersController {
   }
 
   @Put(':id')
-  /*   @UseGuards(AuthGuard)
-   */
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   updateUser(@Param('id') id: string, @Body() fields: User) {
     return this.userDbService.editUser(id, fields);
   }
 
   @Delete(':id')
-  /*   @UseGuards(AuthGuard)
-   */
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   deleteUser(@Param('id') id: string) {
     return this.userDbService.deleteUser(id);

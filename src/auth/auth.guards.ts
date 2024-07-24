@@ -4,32 +4,26 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(private readonly jwtService: JwtService) {}
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const authorizationHeader = request.headers['authorization'];
+    const token = request.headers.authorization?.split(' ')[1];
+    if (!token) throw new UnauthorizedException('No se envío el token');
 
-    if (!authorizationHeader) {
-      throw new UnauthorizedException('No se encuentra Header Authorization');
+    try {
+      const secret = process.env.JWT_SECRET;
+      const user = this.jwtService.verify(token, { secret });
+      request.user = user;
+      return true;
+    } catch (error) {
+      if (!token) throw new UnauthorizedException('Token invalido');
     }
-
-    const [type, credentials] = authorizationHeader.split(' ');
-    if (type !== 'Basic' || !credentials) {
-      throw new UnauthorizedException('Invalid Authorization header format');
-    }
-
-    const [email, password] = credentials.split(':');
-    if (!email || !password) {
-      throw new UnauthorizedException(
-        'Invalid Authorization header credentials',
-      );
-    }
-
-    return true;
   }
 }
