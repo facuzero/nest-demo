@@ -33,7 +33,7 @@ export class OrderRepository {
 
     const order = new Order();
     order.date = new Date();
-    order.user_id = user;
+    order.user = user;
     const newOrder = await this.orderRepository.save(order);
 
     let total = 0;
@@ -60,7 +60,7 @@ export class OrderRepository {
     );
     const orderDetail = new OrderDetail();
     orderDetail.price = Number(total.toFixed(2));
-    orderDetail.order_id = newOrder;
+    orderDetail.order = newOrder;
     orderDetail.products = productsArray;
     const newOrderDetail = await this.orderDetailRepository.save(orderDetail);
 

@@ -16,19 +16,19 @@ export class UsersRepository {
   async getUsers(
     page: number = 1,
     limit: number = 5,
-  ): Promise<Omit<User, 'password'>[]> {
+  ): Promise<Partial<User>[]> {
     const startIndex = (Number(page) - 1) * Number(limit);
     const users = await this.userRepository.find({
       skip: startIndex,
       take: limit,
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return users.map(({ password, ...otherData }) => otherData);
+    return users.map(({ password, isAdmin, ...otherData }) => otherData);
   }
   async getById(id: string): Promise<Omit<User, 'password'>> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: { orders_id: true },
+      relations: { orders: true },
     });
     if (!user) {
       throw new NotFoundException(`No se encontró el usuario con el id ${id}`);
@@ -52,10 +52,10 @@ export class UsersRepository {
     return newUser.id;
   }
 
-  async editUser(userId: string, fields: User): Promise<string> {
+  async editUser(userId: string, fields: Partial<User>) {
     await this.userRepository.update(userId, fields);
     const userUpdated = await this.getById(userId);
-    return userUpdated.id;
+    return userUpdated;
   }
 
   async deleteUser(userId: string): Promise<string> {

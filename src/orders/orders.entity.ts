@@ -19,10 +19,10 @@ export class Order {
   @Column({ nullable: false })
   date: Date;
 
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order_id)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
   orderDetail: OrderDetail[];
 
-  @ManyToOne(() => User, (user) => user.orders_id)
-  @JoinColumn({ name: 'user_id' })
-  user_id: User;
+  @ManyToOne(() => User, (user) => user.orders)
+  @JoinColumn()
+  user: User;
 }

@@ -16,14 +16,22 @@ import { User } from './users.entity';
 import { UsersDbService } from './usersDb.service';
 import { CreateUserDto } from './user.dto';
 import { AuthGuard } from 'src/auth/auth.guards';
+import { Roles } from 'src/decorators/rols.decorator';
+import { Role } from './roles.enum';
+import { RolesGuard } from './roles.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly userDbService: UsersDbService, //Para guardar datos en la DB
   ) {}
+
   @Get()
-  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   getUsers(@Query('page') page: number, @Query('limit') limit: number) {
     return this.userDbService.getUsers(page, limit);
@@ -37,6 +45,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   getById(@Param('id', ParseUUIDPipe) id: string) {
@@ -50,6 +59,7 @@ export class UsersController {
   }
 
   @Put(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   updateUser(@Param('id') id: string, @Body() fields: User) {
@@ -57,6 +67,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   deleteUser(@Param('id') id: string) {

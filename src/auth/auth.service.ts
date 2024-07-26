@@ -16,7 +16,11 @@ export class AuthService {
     if (!userExists || !isValidPassword) {
       throw new BadRequestException('Credenciales incorrectas');
     }
-    const payload = { id: userExists.id, email: userExists.email };
+    const payload = {
+      id: userExists.id,
+      email: userExists.email,
+      isAdmin: userExists.isAdmin,
+    };
     const token = this.jwtService.sign(payload);
     return { message: 'Usuario logueado', token };
   }
@@ -28,5 +32,12 @@ export class AuthService {
       ...user,
       password: hashPass,
     });
+  }
+
+  async toAdmin(id: string) {
+    await this.userRepository.editUser(id, {
+      isAdmin: true,
+    });
+    return { message: 'EL usuario ahora es administrador' };
   }
 }

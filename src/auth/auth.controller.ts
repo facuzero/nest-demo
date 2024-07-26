@@ -4,11 +4,14 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -27,5 +30,10 @@ export class AuthController {
   @Post('signup')
   signUp(@Body() user: CreateUserDto) {
     return this.authService.signup(user);
+  }
+
+  @Post('toAdmin/:id')
+  toAdmin(@Param('id') id: string) {
+    return this.authService.toAdmin(id);
   }
 }

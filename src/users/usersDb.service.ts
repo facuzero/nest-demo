@@ -6,10 +6,7 @@ import { User } from './users.entity';
 export class UsersDbService {
   constructor(private readonly userRepository: UsersRepository) {}
 
-  async getUsers(
-    page: number,
-    limit: number,
-  ): Promise<Omit<User, 'password'>[]> {
+  async getUsers(page: number, limit: number): Promise<Partial<User>[]> {
     return this.userRepository.getUsers(page, limit);
   }
   async getById(id: string): Promise<Omit<User, 'password'>> {
@@ -23,7 +20,7 @@ export class UsersDbService {
   async createUser(newUser: Partial<User>): Promise<string> {
     return this.userRepository.createUser(newUser);
   }
-  async editUser(userId: string, fields: User): Promise<string> {
+  async editUser(userId: string, fields: User) {
     return this.userRepository.editUser(userId, fields);
   }
   async deleteUser(userId: string): Promise<string> {
