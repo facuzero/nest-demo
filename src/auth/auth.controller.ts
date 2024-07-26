@@ -18,10 +18,9 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(HttpStatus.ACCEPTED)
-  async signin(@Body() body: LoginUserDto) {
-    const { email, password } = body;
+  signin(@Body() loginDto: LoginUserDto) {
     try {
-      return await this.authService.signin(email, password);
+      return this.authService.signin(loginDto);
     } catch (error) {
       throw new BadRequestException(error.message);
     }

@@ -1,3 +1,4 @@
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -85,6 +86,35 @@ export class CreateUserDto {
   city: string;
 }
 
+export class UpdateUserDto {
+  @ApiProperty({ required: false, example: 'Test user' })
+  name?: string;
+
+  @ApiHideProperty()
+  email?: string;
+
+  @ApiProperty({ required: false, example: 'AAbb11##' })
+  password?: string;
+
+  @ApiProperty({ required: false, example: 'AAbb11##' })
+  @Validate(passwordCompare, ['password'])
+  confirmPassword?: string;
+
+  @ApiProperty({ required: false, example: '12345678' })
+  phone?: number;
+
+  @ApiProperty({ required: false, example: 'calle falsa 123' })
+  address?: string;
+
+  @ApiProperty({ required: false, example: 'Algun pais' })
+  country?: string;
+
+  @ApiProperty({ required: false, example: 'Alguna ciudad' })
+  city?: string;
+
+  @ApiHideProperty()
+  isAdmin?: boolean;
+}
 export class LoginUserDto {
   /** Un mail, no debe  estar vacio
     @example 'Test@mail.com'
@@ -107,4 +137,13 @@ export class LoginUserDto {
     minSymbols: 1,
   })
   password: string;
+}
+
+export class FindByEmail {
+  /** Busqueda por email
+    @example 'Test@mail.com'
+  */
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 }

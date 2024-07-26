@@ -12,9 +12,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { User } from './users.entity';
 import { UsersDbService } from './usersDb.service';
-import { CreateUserDto } from './user.dto';
+import { FindByEmail, UpdateUserDto } from './user.dto';
 import { AuthGuard } from 'src/auth/auth.guards';
 import { Roles } from 'src/decorators/rols.decorator';
 import { Role } from './roles.enum';
@@ -36,11 +35,11 @@ export class UsersController {
   getUsers(@Query('page') page: number, @Query('limit') limit: number) {
     return this.userDbService.getUsers(page, limit);
   }
-  @Get('email')
+  @Post('email')
   /*   @UseGuards(AuthGuard)
    */
   @HttpCode(HttpStatus.OK)
-  getByEmail(@Body() { email }) {
+  getByEmail(@Body() email: FindByEmail) {
     return this.userDbService.getByEmail(email);
   }
 
@@ -52,17 +51,17 @@ export class UsersController {
     return this.userDbService.getById(id);
   }
 
-  @Post()
+  /* @Post()
   @HttpCode(HttpStatus.CREATED)
   createUser(@Body() user: CreateUserDto) {
     return this.userDbService.createUser(user);
-  }
+  } */
 
   @Put(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  updateUser(@Param('id') id: string, @Body() fields: User) {
+  updateUser(@Param('id') id: string, @Body() fields: UpdateUserDto) {
     return this.userDbService.editUser(id, fields);
   }
 

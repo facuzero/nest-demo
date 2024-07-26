@@ -3,6 +3,7 @@ import { User } from 'src/users/users.entity';
 import { UsersRepository } from 'src/users/users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { LoginUserDto } from 'src/users/user.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -10,7 +11,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signin(email: string, password: string) {
+  async signin(loginDto: LoginUserDto) {
+    const { email, password } = loginDto;
+    if (!email || !password) {
+      throw new BadRequestException('Email y contraseña requeridos');
+    }
     const userExists = await this.userRepository.getByEmail(email);
     const isValidPassword = await bcrypt.compare(password, userExists.password);
     if (!userExists || !isValidPassword) {
