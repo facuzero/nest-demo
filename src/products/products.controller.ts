@@ -16,7 +16,7 @@ import { AuthGuard } from 'src/auth/auth.guards';
 import { Roles } from 'src/decorators/rols.decorator';
 import { Role } from 'src/users/roles.enum';
 import { RolesGuard } from 'src/users/roles.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('products')
 @Controller('products')
@@ -24,11 +24,13 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Listar productos' })
   getProducts() {
     return this.productsService.getProducts();
   }
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Listar producto por ID' })
   getProductById(@Param('id') id: string) {
     return this.productsService.getProductById(id);
   }
@@ -37,6 +39,7 @@ export class ProductsController {
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Crear producto' })
   createProduct(@Body() product: Product) {
     return this.productsService.createProduct(product);
   }
@@ -46,6 +49,7 @@ export class ProductsController {
   @ApiBearerAuth()
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'Actualizar producto ' })
   updateProduct(@Param('id') id: string, @Body() fields: Product) {
     return this.productsService.editProductId(id, fields);
   }
@@ -55,6 +59,7 @@ export class ProductsController {
   @ApiBearerAuth()
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'Eliminar producto por ID' })
   deleteProduct(@Param('id') id: string) {
     return this.productsService.deleteProductById(id);
   }

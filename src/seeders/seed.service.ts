@@ -1,18 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from 'src/products/products.entity';
 import { Category } from 'src/categories/categories.entity';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Order } from 'src/orders/orders.entity';
 
 @Injectable()
-export class SeedService {
+export class SeedService implements OnModuleInit {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
   ) {}
 
   filePath = path.join(__dirname, '..', '..', 'src', 'data', 'preCarga.json');
@@ -38,12 +41,12 @@ export class SeedService {
       if (!category) {
         throw new Error(`Categoría ${item.category} no encontrada`);
       }
-      const haveNameProduct = await this.productRepository.findOne({
+      const hasProductName = await this.productRepository.findOne({
         where: { name: item.name },
       });
-      if (haveNameProduct) {
-        haveNameProduct.stock += item.stock;
-        await this.productRepository.save(haveNameProduct);
+      if (hasProductName) {
+        hasProductName.stock += item.stock;
+        await this.productRepository.save(hasProductName);
       } else {
         const product = this.productRepository.create({
           name: item.name,
@@ -57,6 +60,24 @@ export class SeedService {
     }
     return { message: 'Productos agregados' };
   }
+
+  async resetData() {
+    const hasOrders = await this.checkOrders();
+    if (hasOrders) {
+      return {
+        message:
+          'No se puede reiniciar datos, hay productos en pedidos existentes',
+      };
+    }
+    await this.productRepository.clear(); // Eliminar todos los productos
+    await this.loadProductsData();
+    return { message: 'Datos reiniciados exitosamente' };
+  }
+  async checkOrders() {
+    const orders = await this.orderRepository.count();
+    return orders > 0;
+  }
+
   async onModuleInit() {
     await this.loadCategoriesData();
     await this.loadProductsData();

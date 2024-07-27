@@ -1,6 +1,8 @@
 import {
   Controller,
   FileTypeValidator,
+  HttpCode,
+  HttpStatus,
   MaxFileSizeValidator,
   Param,
   ParseFilePipe,
@@ -12,7 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
 import { AuthGuard } from 'src/auth/auth.guards';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('file-upload')
 @ApiBearerAuth()
@@ -20,6 +22,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
   @Post('uploadImage/:id')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Subir una imagen a Cloudynary' })
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(

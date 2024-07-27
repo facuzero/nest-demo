@@ -18,7 +18,7 @@ import { AuthGuard } from 'src/auth/auth.guards';
 import { Roles } from 'src/decorators/rols.decorator';
 import { Role } from './roles.enum';
 import { RolesGuard } from './roles.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('users')
 @Controller('users')
@@ -32,6 +32,7 @@ export class UsersController {
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Listar usuarios' })
   getUsers(@Query('page') page: number, @Query('limit') limit: number) {
     return this.userDbService.getUsers(page, limit);
   }
@@ -39,6 +40,7 @@ export class UsersController {
   /*   @UseGuards(AuthGuard)
    */
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Listar usuario por Email' })
   getByEmail(@Body() email: FindByEmail) {
     return this.userDbService.getByEmail(email);
   }
@@ -47,6 +49,7 @@ export class UsersController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Listar usuario por ID' })
   getById(@Param('id', ParseUUIDPipe) id: string) {
     return this.userDbService.getById(id);
   }
@@ -61,6 +64,7 @@ export class UsersController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Actualizar usuario por ID' })
   updateUser(@Param('id') id: string, @Body() fields: UpdateUserDto) {
     return this.userDbService.editUser(id, fields);
   }
@@ -69,6 +73,7 @@ export class UsersController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Eliminar usuario por ID' })
   deleteUser(@Param('id') id: string) {
     return this.userDbService.deleteUser(id);
   }
