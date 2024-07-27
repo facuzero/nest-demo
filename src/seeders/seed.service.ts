@@ -28,6 +28,7 @@ export class SeedService {
         await this.categoryRepository.save(category);
       }
     }
+    return { message: 'Categorías agregadas' };
   }
   async loadProdcutsData() {
     for (const item of this.data) {

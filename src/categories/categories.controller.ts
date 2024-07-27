@@ -2,10 +2,14 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './categories.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { SeedService } from 'src/seeders/seed.service';
 @ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(
+    private readonly categoriesService: CategoriesService,
+    private readonly seederService: SeedService,
+  ) {}
   @Get()
   getCategories() {
     return this.categoriesService.getCategories();
@@ -16,6 +20,6 @@ export class CategoriesController {
   }
   @Post('seeder')
   addSeeder() {
-    return this.categoriesService.loadCategoriesData();
+    return this.seederService.loadCategoriesData();
   }
 }

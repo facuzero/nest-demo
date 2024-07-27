@@ -10,7 +10,7 @@ async function bootstrap() {
     .setTitle('Proyecto integrador BACK: Facundo Diaz')
     .setDescription('Documentacion creada con nest SWAGGER')
     .setVersion('1.0.0')
-    .addBearerAuth() // Autorizacion para rutas, en este caso el token
+    .addBearerAuth() // Autorizacion para rutas, en este caso con el token
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);

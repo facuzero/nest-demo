@@ -11,7 +11,4 @@ export class CategoriesService {
   addCategories(category: Category) {
     return this.categoryRepository.addCategories(category);
   }
-  loadCategoriesData() {
-    return this.categoryRepository.loadCategoriesData();
-  }
 }
