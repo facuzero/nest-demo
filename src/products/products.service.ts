@@ -20,7 +20,4 @@ export class ProductsService {
   deleteProductById(id: string) {
     return this.productsRepository.deleteProducts(id);
   }
-  loadProductsData() {
-    return this.productsRepository.loadProdcutsData();
-  }
 }

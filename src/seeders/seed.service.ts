@@ -30,17 +30,35 @@ export class SeedService {
     }
     return { message: 'Categorías agregadas' };
   }
-  async loadProdcutsData() {
+  async loadProductsData() {
     for (const item of this.data) {
-      const product = this.productRepository.create({
-        name: item.name,
-        description: item.description,
-        price: item.price,
-        stock: item.stock,
-        category: item.category,
+      const category = await this.categoryRepository.findOne({
+        where: { name: item.category },
       });
-
-      await this.productRepository.save(product);
+      if (!category) {
+        throw new Error(`Categoría ${item.category} no encontrada`);
+      }
+      const haveNameProduct = await this.productRepository.findOne({
+        where: { name: item.name },
+      });
+      if (haveNameProduct) {
+        haveNameProduct.stock += item.stock;
+        await this.productRepository.save(haveNameProduct);
+      } else {
+        const product = this.productRepository.create({
+          name: item.name,
+          description: item.description,
+          price: item.price,
+          stock: item.stock,
+          category,
+        });
+        await this.productRepository.save(product);
+      }
     }
+    return { message: 'Productos agregados' };
+  }
+  async onModuleInit() {
+    await this.loadCategoriesData();
+    await this.loadProductsData();
   }
 }

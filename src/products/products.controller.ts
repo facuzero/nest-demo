@@ -58,10 +58,4 @@ export class ProductsController {
   deleteProduct(@Param('id') id: string) {
     return this.productsService.deleteProductById(id);
   }
-
-  @Post('seeder')
-  @HttpCode(HttpStatus.CREATED)
-  addSeeder() {
-    return this.productsService.loadProductsData();
-  }
 }
