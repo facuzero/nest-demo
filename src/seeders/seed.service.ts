@@ -69,7 +69,7 @@ export class SeedService implements OnModuleInit {
           'No se puede reiniciar datos, hay productos en pedidos existentes',
       };
     }
-    await this.productRepository.clear(); // Eliminar todos los productos
+    await this.productRepository.delete({}); // Eliminar todos los registros de productos
     await this.loadProductsData();
     return { message: 'Datos reiniciados exitosamente' };
   }

@@ -22,7 +22,9 @@ export class SeedController {
 
   @Post('reset')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Reinicia los datos de la base de datos' })
+  @ApiOperation({
+    summary: 'Borra los datos de productos y los vuelva a cargar',
+  })
   @ApiResponse({ status: 200, description: 'Datos reiniciados correctamente' })
   @ApiResponse({
     status: 403,
