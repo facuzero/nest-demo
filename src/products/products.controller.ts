@@ -11,12 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { Product } from './products.entity';
 import { AuthGuard } from 'src/auth/auth.guards';
 import { Roles } from 'src/decorators/rols.decorator';
 import { Role } from 'src/users/roles.enum';
 import { RolesGuard } from 'src/users/roles.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateProductDto, UpdateProductDto } from './products.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -40,7 +40,7 @@ export class ProductsController {
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Crear producto' })
-  createProduct(@Body() product: Product) {
+  createProduct(@Body() product: CreateProductDto) {
     return this.productsService.createProduct(product);
   }
 
@@ -50,7 +50,7 @@ export class ProductsController {
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Actualizar producto ' })
-  updateProduct(@Param('id') id: string, @Body() fields: Product) {
+  updateProduct(@Param('id') id: string, @Body() fields: UpdateProductDto) {
     return this.productsService.editProductId(id, fields);
   }
 
