@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/users/users.entity';
 import { OrderDetail } from 'src/orderDetail/orderDetails.entity';
 import { Product } from 'src/products/products.entity';
+import { CreateOrderDto } from './order.dto';
 
 @Injectable()
 export class OrderRepository {
@@ -23,14 +24,14 @@ export class OrderRepository {
     private productRepository: Repository<Product>,
   ) {}
 
-  async addOrder(userId: string, products: Product[]) {
+  async addOrder(orderDto: CreateOrderDto) {
+    const { userId, products } = orderDto;
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException(
         `No se encontró el usuario con el id ${userId}`,
       );
     }
-
     const order = new Order();
     order.date = new Date();
     order.user = user;
@@ -59,7 +60,7 @@ export class OrderRepository {
       }),
     );
     const orderDetail = new OrderDetail();
-    orderDetail.price = Number(total.toFixed(2));
+    orderDetail.total = Number(total.toFixed(2));
     orderDetail.order = newOrder;
     orderDetail.products = productsArray;
     const newOrderDetail = await this.orderDetailRepository.save(orderDetail);
@@ -69,16 +70,26 @@ export class OrderRepository {
 
     return await this.orderDetailRepository.find({
       where: { id: newOrderDetail.id },
-      relations: ['order_id', 'products'], // hace referencia a  las propiedades de ordenDetails.entity
+      relations: ['order', 'products'], // hace referencia a  las propiedades de ordenDetails.entity
     });
   }
   async getOrder(id: string) {
-    const order = await this.orderRepository.findOne({
+    const order = await this.orderDetailRepository /* .findOne({
       where: { id },
       relations: {
-        orderDetail: true,
+        order: {
+          user: true,
+        },
+        products: true,
       },
-    });
+    }); */
+      .createQueryBuilder('orderDetails')
+      .leftJoinAndSelect('orderDetails.order', 'orders')
+      .leftJoinAndSelect('orderDetails.products', 'products')
+      .leftJoinAndSelect('orders.user', 'users')
+      //.addSelect(['users.email']) // Selecciona solo el campo 'email' del usuario
+      .where('orderDetails.id = :id', { id })
+      .getOne();
     if (!order) {
       throw new NotFoundException(`Orden con id ${id} no encontrada`);
     }

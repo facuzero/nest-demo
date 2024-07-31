@@ -25,7 +25,7 @@ export class OrderDetail {
     description: 'Precio total de la orden',
   })
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
-  price: number;
+  total: number;
 
   @ApiProperty({
     description: 'Relacion con la orden',
