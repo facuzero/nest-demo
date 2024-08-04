@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Order } from 'src/orders/orders.entity';
+import { Order } from '../orders/orders.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 @Entity({
